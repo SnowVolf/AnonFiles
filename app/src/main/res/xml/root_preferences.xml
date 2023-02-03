@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Connection">
+        <SwitchPreferenceCompat
+            app:key="enable_proxy"
+            app:title="Connect over proxy"
+            app:summary="Use this option if AnonFiles has been blocked in your country. ONLY HTTP proxy are supported! SOCKS proxy doesn't work!!!"/>
+        <EditTextPreference
+            app:key="proxy_server"
+            app:title="Proxy server"
+            app:dependency="enable_proxy"
+            app:useSimpleSummaryProvider="true"/>
+        <EditTextPreference
+            app:key="proxy_port"
+            app:title="Proxy port"
+            app:dependency="enable_proxy"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

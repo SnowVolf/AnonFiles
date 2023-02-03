@@ -16,4 +16,5 @@ import kotlinx.serialization.SerialName
  * @see ApiError
  */
 @kotlinx.serialization.Serializable
-data class AnonResponse(@SerialName("status") val status: Boolean, @SerialName("data") val data: ApiFile?, @SerialName("error") val error: ApiError?)
+data class AnonResponse(@SerialName("status") val status: Boolean, @SerialName("data")
+val data: ApiFile? = null, @SerialName("error") val error: ApiError? = null)
