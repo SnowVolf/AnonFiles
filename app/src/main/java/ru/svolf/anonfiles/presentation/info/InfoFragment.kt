@@ -6,27 +6,45 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.svolf.anonfiles.R
-
+import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
+import ru.svolf.anonfiles.databinding.FragmentInfoBinding
+@AndroidEntryPoint
 class InfoFragment : Fragment() {
-
+    private var _binding: FragmentInfoBinding? = null
+    private val binding get() = _binding!!
+    private val infoModel by viewModels<InfoViewModel>()
     companion object {
-        fun newInstance(link: String) = InfoFragment().arguments?.putString("link", link)
+        // Резолвится из DeepLink Navigation UI
+        private const val ARG_FILE_ID = "file_id"
+        fun newInstance(link: String) = InfoFragment().arguments?.putString(ARG_FILE_ID, link)
     }
 
-    private lateinit var viewModel: InfoViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_info, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentInfoBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(InfoViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        arguments?.getString(ARG_FILE_ID)?.let { infoModel.getData(it) }
+        infoModel.loadingState.observe(viewLifecycleOwner) { loadState ->
+            // Показываем заглушку
+            if (loadState) {
+                binding.layoutProgress.visibility = View.VISIBLE
+                binding.layoutFileContent.visibility = View.GONE
+            } else {
+                // Контент загрузился
+                binding.layoutFileContent.visibility = View.VISIBLE
+                binding.layoutProgress.visibility = View.GONE
+                infoModel.responseData.observe(viewLifecycleOwner) {response ->
+                    if (response.status) {
+                        val file = response.data?.file!!
+                        binding.textContent.text = "File: ${file.metadata.name}\nSize: ${file.metadata.size.readable}"
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -16,4 +16,5 @@ object ErrorCodes {
  const val ERROR_FILE_SIZE_EXCEEDED = 31
  const val ERROR_FILE_BANNED = 32
  const val STATUS_ERROR_SYSTEM_FAILURE = 40
+ const val NOT_FOUND = 404
 }

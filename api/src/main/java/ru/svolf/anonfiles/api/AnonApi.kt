@@ -1,8 +1,10 @@
 package ru.svolf.anonfiles.api
 
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 /*
@@ -11,8 +13,8 @@ import retrofit2.http.Path
  */
 interface AnonApi {
     @POST("upload")
-    fun upload(): Call<AnonResponse>
+    suspend fun upload(@Part file: MultipartBody.Part): Call<AnonResponse>
 
     @GET("v2/file/{id}/info")
-    fun getInfo(@Path("id") fileId: String): Call<AnonResponse>
+    suspend fun getInfo(@Path("id") fileId: String): Call<AnonResponse>
 }
