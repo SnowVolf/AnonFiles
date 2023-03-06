@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_info">Информация</string>
+    <string name="btn_download">Загрузить</string>
+    <string name="msg_fetching_file_data">Получение информации по ссылке</string>
+    <string name="hint_extract_link">Введите ссылку на файл</string>
+    <string name="title_history">История</string>
+    <string name="settings_title_connect">Подключение через прокси</string>
+    <string name="settings_summary_connect">Используйте эту функцию, если AnonFiles заблокирован в вашей стране. Поддерживается SOCKS 4/5</string>
+    <string name="settings_title_proxy">Прокси сервер</string>
+    <string name="settings_title_port">Прокси порт</string>
+    <string name="settings_title_find_proxy">Найти прокси</string>
+    <string name="settings_summary_find_proxy">Выбрать стабильный прокси от HideMy.name</string>
+    <string name="settings_category_connection">Соединение</string>
+    <string name="title_properties">Свойства</string>
+    <string name="properties_filename">Имя файла</string>
+    <string name="properties_size">Размер</string>
+    <string name="properties_link">URL адрес</string>
+    <string name="properties_uploaded">Дата загрузки</string>
+    <string name="msg_item_copyable">Вы можете скопировать значение поля, нажав на него</string>
+    <string name="msg_copied_clipboard">Скопировано в буфер обмена</string>
+    <string name="msg_network_unavaiable">Сеть недоступна</string>
+    <string name="msg_vpn_enabled">Включен VPN. Отключите прокси в приложении</string>
+    <string name="properties_error_type">Тип ошибки</string>
+    <string name="properties_error_message">Сообщение об ошибке</string>
+    <string name="properties_error_code">Код ошибки</string>
+    <string name="title_error">Ошибка!</string>
+    <string name="notifications_channel_title">Загрузка/Выгрузка</string>
+    <string name="notification_channel_desc">Это уведомление отображается только во время загрузки/выгрузки файлов</string>
+    <string name="notification_title_downloading">Загрузка: %s</string>
+    <string name="notification_title_downloaded">Загружено: %s</string>
+    <string name="notification_msg_open">Нажмите для просмотра</string>
+    <string name="states_success">Успешно завершено</string>
+    <string name="state_running">Идет загрузка</string>
+    <string name="state_error">Произошла ошибка. Попробуйте использовать VPN</string>
+    <string name="state_cancelled">Загрузка отменена</string>
+    <string name="state_unknown">Неизвестная ошибка</string>
+    <string name="msg_download_start">Начинается загрузка</string>
+</resources>

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.info.InfoFragment">
     <LinearLayout
         android:id="@+id/layout_progress"
@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:text="Загрузка информации о файле"
+            android:text="@string/msg_fetching_file_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
@@ -25,17 +25,26 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/text_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:layout_width="wrap_content"
+        android:orientation="vertical"
+        tools:visibility="visible">
+       <androidx.appcompat.widget.SearchView
+           android:id="@+id/field_search"
+           android:layout_width="match_parent"
+           android:layout_height="?actionBarSize"
+           app:queryHint="@string/hint_extract_link"
+           app:queryBackground="@android:color/transparent"
+           app:searchIcon="@null"
+           app:iconifiedByDefault="false"
+           android:background="@drawable/edit_text_selector"/>
+
+        <include layout="@layout/item_downloadable" android:id="@+id/included"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_history"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="File: Download.zip\nSize: 55 MB\nDate: 2022-01-10"/>
-        <Button
-            android:layout_gravity="end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Download"/>
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     </LinearLayout>
 </FrameLayout>

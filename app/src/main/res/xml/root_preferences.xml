@@ -1,20 +1,34 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="Connection">
+    <PreferenceCategory app:title="@string/settings_category_connection" app:iconSpaceReserved="false">
         <SwitchPreferenceCompat
             app:key="enable_proxy"
-            app:title="Connect over proxy"
-            app:summary="Use this option if AnonFiles has been blocked in your country. ONLY HTTP proxy are supported! SOCKS proxy doesn't work!!!"/>
+            app:title="@string/settings_title_connect"
+            app:iconSpaceReserved="false"
+            app:summary="@string/settings_summary_connect"/>
         <EditTextPreference
             app:key="proxy_server"
-            app:title="Proxy server"
+            app:title="@string/settings_title_proxy"
             app:dependency="enable_proxy"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
         <EditTextPreference
             app:key="proxy_port"
-            app:title="Proxy port"
+            app:title="@string/settings_title_port"
             app:dependency="enable_proxy"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            app:key="proxy_check"
+            app:iconSpaceReserved="false"
+            app:title="@string/settings_title_find_proxy"
+            app:summary="@string/settings_summary_find_proxy">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://hidemy.name/proxy-list/?type=45#list"/>
+        </Preference>
     </PreferenceCategory>
 
 </PreferenceScreen>

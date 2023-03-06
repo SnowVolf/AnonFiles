@@ -1,17 +1,46 @@
 <resources>
-    <string name="app_name">AnonFiles</string>
+    <string name="app_name" translatable="false">AnonFiles</string>
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_info">Info</string>
+    <string name="btn_download">Download</string>
+    <string name="msg_fetching_file_data">Fetching file data…</string>
+    <string name="hint_extract_link">Enter the link</string>
+    <string name="title_history">History</string>
+    <string name="settings_title_connect">Connect over proxy</string>
+    <string name="settings_summary_connect">Use this option if AnonFiles has been blocked in your country. ONLY SOCKS proxy are supported! HTTP proxy doesn\'t work!!!</string>
+    <string name="settings_title_proxy">Proxy server</string>
+    <string name="settings_title_port">Proxy port</string>
+    <string name="settings_title_find_proxy">Find proxy</string>
+    <string name="settings_summary_find_proxy">Find stable proxy from HideMy.name</string>
+    <string name="settings_category_connection">Connection</string>
+    <string name="title_properties">Properties</string>
+    <string name="properties_filename">File name</string>
+    <string name="properties_size">Size</string>
+    <string name="properties_link">URL address</string>
+    <string name="properties_uploaded">Date uploaded</string>
+    <string name="msg_item_copyable">You can copy value by clicking on them</string>
+    <string name="msg_copied_clipboard">Copied to clipboard</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="msg_network_unavaiable">Network unavailable</string>
+    <string name="msg_vpn_enabled">VPN enabled. Turn off an application proxy</string>
+    <string name="properties_error_type">Error type</string>
+    <string name="properties_error_message">Error message</string>
+    <string name="properties_error_code">Error response code</string>
+    <string name="title_error">Error!</string>
+    <string name="notifications_channel_title">Download/Upload</string>
+    <string name="notification_channel_desc">This notification shown\'s only if app is doing download/upload operations</string>
+    <string name="notification_title_downloading">Downloading: %s</string>
+    <string name="notification_title_downloaded">Downloaded: %s</string>
+    <string name="notification_msg_open">Press to open</string>
+    <string name="states_success">Successful</string>
+    <string name="state_running">Work in progress</string>
+    <string name="state_error">Failed. Try to use VPN</string>
+    <string name="state_cancelled">Cancelled</string>
+    <string name="state_unknown">Unknown error</string>
+    <string name="msg_download_start">Starting download</string>
 </resources>

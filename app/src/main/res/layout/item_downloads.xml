@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/download_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        tools:src="@drawable/ic_upload"/>
+
+    <TextView
+        android:id="@+id/title_download"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/download_icon"
+        android:paddingHorizontal="16dp"
+        tools:text="Download.zip"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/title_size"
+        app:layout_constraintStart_toStartOf="@id/title_download"
+        app:layout_constraintTop_toBottomOf="@id/title_download"
+        android:paddingHorizontal="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        tools:text="55 MB"/>
+
+    <TextView
+        android:id="@+id/title_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_download"
+        android:textSize="11sp"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        tools:text="9 августа 2022"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
