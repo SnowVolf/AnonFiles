@@ -22,6 +22,7 @@ import ru.svolf.anonfiles.util.NetworkStatusTracker
 import timber.log.Timber
 import java.net.InetSocketAddress
 import java.net.Proxy
+import java.net.ProxySelector
 import javax.inject.Singleton
 
 
@@ -34,15 +35,16 @@ import javax.inject.Singleton
 object NetworkModule {
 
 	@Provides
+	@Singleton
 	fun provideHttpClient(sharedPreferences: SharedPreferences): OkHttpClient {
-		val host = OkHttpClient.Builder()
+		val builder = OkHttpClient.Builder()
 
 		val logger = HttpLoggingInterceptor()
 		logger.level = HttpLoggingInterceptor.Level.BODY
-		host.interceptors().add(logger)
+		builder.addInterceptor(logger)
 
+		// Check if proxy is enabled and update builder accordingly
 		if (sharedPreferences.getBoolean("enable_proxy", false)) {
-			Timber.d("Trying to set proxy")
 			val proxy = Proxy(
 				Proxy.Type.SOCKS,
 				InetSocketAddress(
@@ -50,10 +52,15 @@ object NetworkModule {
 					sharedPreferences.getString("proxy_port", "0")!!.toInt()
 				)
 			)
-			host.proxy(proxy)
-			Timber.d("Successfully set proxy")
+			builder.proxy(proxy)
+		} else {
+			builder.proxy(null)
 		}
-		return host.build()
+
+		// Clear any previously set proxy selector to ensure that the new proxy settings are used
+		builder.proxySelector(ProxySelector.getDefault())
+
+		return builder.build()
 	}
 
 	@Provides

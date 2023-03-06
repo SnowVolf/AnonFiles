@@ -1,5 +1,6 @@
 package ru.svolf.anonfiles.data.repository
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +26,7 @@ class NetworkRepository @Inject constructor(val api: AnonApi) {
                 false -> AnonResult.Error(call.error!!)
             }
         } catch (ex: Throwable) {
+            if (ex is CancellationException) throw ex
             AnonResult.Error(ApiError("Unknown error", "UNKNOWN", ErrorCodes.ERROR_FILE_INVALID))
         }
     }

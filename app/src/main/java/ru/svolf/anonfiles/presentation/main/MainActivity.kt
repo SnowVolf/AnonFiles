@@ -28,13 +28,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mediator: TabLayoutMediator
     private val tabLayout by lazy { binding.tabLayout }
     private val viewPager by lazy { binding.viewPager }
-    private val pagerAdapter by lazy {
-        ViewPagerAdapter(this).apply {
-            addFragment(InfoFragment(), R.drawable.ic_download)
-            addFragment(UploadFragment(), R.drawable.ic_upload)
-            addFragment(SettingsFragment(), R.drawable.ic_settings)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +35,13 @@ class MainActivity : AppCompatActivity() {
             setContentView(it.root)
             setSupportActionBar(it.toolbar)
         }
+
+        val pagerAdapter = ViewPagerAdapter(this).apply {
+            addFragment(InfoFragment(), R.drawable.ic_download)
+            addFragment(UploadFragment(), R.drawable.ic_upload)
+            addFragment(SettingsFragment(), R.drawable.ic_settings)
+        }
+
         viewModel.networkState.observe(this) {state ->
             when(state) {
                 false -> {

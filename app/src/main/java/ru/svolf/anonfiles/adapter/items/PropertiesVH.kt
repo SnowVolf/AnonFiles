@@ -14,7 +14,7 @@ import ru.svolf.anonfiles.databinding.ItemPropertiesBinding
  * Created by SVolf on 01.03.2023, 16:27
  * This file is a part of "AnonFiles" project
  */
-class PropertiesVH(private val listener: (PropertiesItem) -> Unit): ItemVH<ItemPropertiesBinding, PropertiesItem> {
+class PropertiesVH(private val listener: (PropertiesItem) -> Unit?): ItemVH<ItemPropertiesBinding, PropertiesItem> {
 	override fun isMatchingItem(item: Item) = item is PropertiesItem
 
 	override fun getLayoutId() = R.layout.item_properties

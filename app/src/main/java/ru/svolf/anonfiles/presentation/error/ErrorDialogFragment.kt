@@ -1,14 +1,10 @@
 package ru.svolf.anonfiles.presentation.error
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.os.Build
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ru.svolf.anonfiles.R
@@ -16,8 +12,6 @@ import ru.svolf.bullet.BulletAdapter
 import ru.svolf.anonfiles.adapter.items.ExplanationVH
 import ru.svolf.anonfiles.adapter.items.PropertiesVH
 import ru.svolf.anonfiles.api.ApiError
-import ru.svolf.anonfiles.data.entity.DownloadsItem
-import ru.svolf.anonfiles.data.entity.ExplanationItem
 import ru.svolf.anonfiles.data.entity.PropertiesItem
 import ru.svolf.anonfiles.databinding.DialogPropertiesBinding
 
@@ -42,7 +36,7 @@ class ErrorDialogFragment : BottomSheetDialogFragment() {
 		fun newInstance(item: ApiError, manager: FragmentManager) =
 			ErrorDialogFragment().also {
 				it.arguments = Bundle().apply {
-					putParcelable(ARG_DB_ITEM, item)
+					putSerializable(ARG_DB_ITEM, item)
 				}
 			}.show(manager, TAG)
 	}
@@ -50,7 +44,11 @@ class ErrorDialogFragment : BottomSheetDialogFragment() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
-			interestedItem = it.getParcelable(ARG_DB_ITEM)!!
+			interestedItem =
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+					it.getSerializable(ARG_DB_ITEM, ApiError::class.java)
+				else
+					it.getSerializable(ARG_DB_ITEM) as ApiError
 		}
 	}
 
@@ -62,10 +60,10 @@ class ErrorDialogFragment : BottomSheetDialogFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding.title.setText(R.string.title_error)
-		val datapter = BulletAdapter(listOf(PropertiesVH(::println), ExplanationVH()))
-		binding.listProperties.adapter = datapter
+		val adapter = BulletAdapter(listOf(PropertiesVH(::println), ExplanationVH()))
+		binding.listProperties.adapter = adapter
 		interestedItem?.let {
-			datapter.mergeItems(processItem(it))
+			adapter.mergeItems(processItem(it))
 		}
 	}
 

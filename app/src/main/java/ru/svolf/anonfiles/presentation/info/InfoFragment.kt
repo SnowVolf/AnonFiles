@@ -18,7 +18,9 @@ import androidx.work.*
 import com.afollestad.assent.Permission
 import com.afollestad.assent.runWithPermissions
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.observeOn
+import kotlinx.coroutines.launch
 import ru.svolf.anonfiles.R
 import ru.svolf.bullet.BulletAdapter
 import ru.svolf.anonfiles.adapter.decorators.PrettyPaddingItemDecoration
@@ -44,7 +46,6 @@ class InfoFragment : Fragment() {
     private val infoModel by viewModels<InfoViewModel>()
     private val historyViewModel by viewModels<HistoryViewModel>()
     @Inject lateinit var api: AnonApi
-    @Inject lateinit var workManager: WorkManager
 
     private lateinit var bulletAdapter: BulletAdapter
 
@@ -63,13 +64,6 @@ class InfoFragment : Fragment() {
             adapter = bulletAdapter
         }
 
-        historyViewModel.getItems().observe(viewLifecycleOwner) {items ->
-            val populatedItems = mutableListOf<Item>()
-            populatedItems.add(TitleItem(getString(R.string.title_history)))
-            populatedItems.addAll(items)
-            bulletAdapter.mergeItems(populatedItems)
-        }
-
         binding.fieldSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty()) {
@@ -82,17 +76,22 @@ class InfoFragment : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
-
         })
 
         with(infoModel) {
             lifecycleScope.launchWhenStarted {
-                loadingState.collect {
-                    switch(it)
+                historyViewModel.getItems().collect { items ->
+                    val populatedItems = mutableListOf<Item>()
+                    populatedItems.add(TitleItem(getString(R.string.title_history)))
+                    populatedItems.addAll(items)
+                    bulletAdapter.mergeItems(populatedItems)
                 }
             }
             lifecycleScope.launchWhenStarted {
-                responseState.collect { response ->
+                loadingState.collectLatest(::switch)
+            }
+            lifecycleScope.launchWhenStarted {
+                responseState.collectLatest { response ->
                     when(response) {
                         is AnonResult.Success -> onFileFetched(response.data)
                         is AnonResult.Error -> onErrorThrown(response.error)
@@ -134,21 +133,8 @@ class InfoFragment : Fragment() {
         binding.included.title.text = fileName
         binding.included.subtitle.text = fileSize
         binding.included.buttonDownload.setOnClickListener {
-            runWithPermissions(Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.POST_NOTIFICATIONS){
-                Toast.makeText(context, R.string.msg_download_start, Toast.LENGTH_SHORT).show()
-                infoModel.downloadWithWorkManager(apiFile).observe(viewLifecycleOwner) {
-                    binding.included.subtitle.text = when (it.state) {
-                        WorkInfo.State.SUCCEEDED -> getString(R.string.states_success)
-                        WorkInfo.State.RUNNING -> getString(R.string.state_running)
-                        WorkInfo.State.FAILED -> getString(R.string.state_error)
-                        WorkInfo.State.CANCELLED -> getString(R.string.state_cancelled)
-                        else -> getString(R.string.state_unknown)
-                    }
-                }
-            }
+            downloadFile(apiFile, link, fileName)
         }
-
-        historyViewModel.putAsDownloaded(link, fileSize)
     }
 
     private fun onErrorThrown(error: ApiError){
@@ -156,6 +142,26 @@ class InfoFragment : Fragment() {
             binding.included.root.visibility = View.GONE
         }
         ErrorDialogFragment.newInstance(error, childFragmentManager)
+    }
+
+    private fun downloadFile(apiFile: ApiFile, link: String, fileSize: String){
+        runWithPermissions(Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.POST_NOTIFICATIONS){
+            Toast.makeText(context, R.string.msg_download_start, Toast.LENGTH_SHORT).show()
+            infoModel.downloadWithWorkManager(apiFile).observe(viewLifecycleOwner) {
+                binding.included.subtitle.text = when (it.state) {
+                    WorkInfo.State.SUCCEEDED -> getString(R.string.states_success)
+                    WorkInfo.State.RUNNING -> getString(R.string.state_running)
+                    WorkInfo.State.FAILED -> getString(R.string.state_error)
+                    WorkInfo.State.CANCELLED -> getString(R.string.state_cancelled)
+                    else -> getString(R.string.state_unknown)
+                }
+                if (it.state == WorkInfo.State.SUCCEEDED) {
+                    lifecycleScope.launchWhenStarted {
+                        historyViewModel.put(link, fileSize)
+                    }
+                }
+            }
+        }
     }
 
 }

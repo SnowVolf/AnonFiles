@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.svolf.anonfiles.api.AnonApi
 import ru.svolf.anonfiles.api.AnonResult
@@ -20,10 +21,10 @@ import javax.inject.Inject
 class InfoViewModel @Inject constructor(private val worker: WorkManager) : ViewModel() {
 
 	private val _responseState = MutableStateFlow<AnonResult>(AnonResult.Empty)
-	val responseState: StateFlow<AnonResult> = _responseState
+	val responseState = _responseState.asStateFlow()
 
 	private val _loadingState = MutableStateFlow(false)
-	val loadingState: StateFlow<Boolean> = _loadingState
+	val loadingState = _loadingState.asStateFlow()
 
 	fun getData(link: String, api: AnonApi) {
 		Timber.d(link)

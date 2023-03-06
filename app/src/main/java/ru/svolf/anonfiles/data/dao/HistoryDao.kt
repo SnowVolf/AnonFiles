@@ -1,9 +1,8 @@
 package ru.svolf.anonfiles.data.dao
 
 import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
-import androidx.paging.PagingSource
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import ru.svolf.anonfiles.data.entity.DownloadsItem
 
 /*
@@ -13,7 +12,7 @@ import ru.svolf.anonfiles.data.entity.DownloadsItem
 @Dao
 interface HistoryDao {
 	@Query("SELECT * FROM history ORDER BY id DESC")
-	fun getAll(): LiveData<List<DownloadsItem>>
+	fun getAll(): Flow<List<DownloadsItem>>
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	suspend fun add(item: DownloadsItem)

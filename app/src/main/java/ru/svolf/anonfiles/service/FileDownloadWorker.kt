@@ -18,12 +18,17 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import ru.svolf.anonfiles.R
 import ru.svolf.anonfiles.api.AnonApi
+import ru.svolf.anonfiles.data.repository.HistoryRepository
 import ru.svolf.anonfiles.util.UrlExtractor.findMatchedString
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import kotlin.random.Random
 
 /*
@@ -35,7 +40,7 @@ class FileDownloadWorker @AssistedInject constructor(
 	@Assisted private val context: Context,
 	@Assisted workerParameters: WorkerParameters,
 	private val api: AnonApi,
-	private val worker: WorkManager
+	private val worker: WorkManager,
 ): CoroutineWorker(context, workerParameters) {
 
 	private val builder = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
@@ -64,8 +69,9 @@ class FileDownloadWorker @AssistedInject constructor(
 		val needUrl = doTempPrepositions(fileUrl)
 
 		if (needUrl != null) {
-			val uri = getSavedFileUri(fileName, fileType, needUrl, context)
 
+			val uri = getSavedFileUri(fileName, fileType, needUrl, context)
+			// File succesfully downloaded
 			builder.setSmallIcon(IconCompat.createWithResource(context, R.drawable.ic_download_done))
 				.setContentTitle(context.getString(R.string.notification_title_downloaded, fileName))
 				.setOngoing(false)
@@ -87,6 +93,7 @@ class FileDownloadWorker @AssistedInject constructor(
 	}
 
 	private suspend fun getSavedFileUri(fileName: String, fileType: String, fileUrl: String?, context: Context): Uri? {
+		delay(1000)
 		val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileType) ?: ""
 
 		if (mimeType.isEmpty() or fileUrl.isNullOrEmpty()) return null
@@ -104,34 +111,34 @@ class FileDownloadWorker @AssistedInject constructor(
 
 				val resolver = context.contentResolver
 				val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
-				return if (uri != null) {
-					try {
+				return try  {
+					withContext(Dispatchers.IO) {
 						fileResponse.byteStream().use { input ->
-							resolver.openOutputStream(uri).use { output ->
+							resolver.openOutputStream(uri!!).use { output ->
 								input.copyTo(output!!, 1024 * 1024 * 4) // 4 MB buffer
 							}
 						}
 						uri
-					} catch (ex: Exception) {
-						null
 					}
-				} else {
+				} catch (ex: IOException) {
 					null
 				}
 			} else {
 				// Legacy File IO
-				val target = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
-				try {
-					fileResponse.byteStream().use { input ->
-						FileOutputStream(target).use { output ->
-							input.copyTo(output, 1024 * 1024 * 3) // 4 MB buffer
+				withContext(Dispatchers.IO) {
+					val target = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+					try {
+						fileResponse.byteStream().use { input ->
+							FileOutputStream(target).use { output ->
+								input.copyTo(output, 1024 * 1024 * 4) // 4 MB buffer
+							}
 						}
+					} catch (ex: IOException) {
+						// прокидываю null чтоб задача корректно отменилась
+						return@withContext null
 					}
-				} catch (ex: Exception) {
-					// прокидываю null чтоб задача корректно отменилась
-					return null
+					return@withContext target.toUri()
 				}
-				return target.toUri()
 			}
 		}
 		return null
@@ -167,6 +174,9 @@ class FileDownloadWorker @AssistedInject constructor(
 		return findMatchedString(text!!)
 	}
 
+	/**
+	 * Intent по которому можно будет открыть файл который юзер загрузил
+	 */
 	private fun createIntent(uri: Uri): PendingIntent {
 		val srcIntent = Intent.createChooser(
 			Intent(Intent.ACTION_VIEW, uri).apply {
