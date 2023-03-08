@@ -12,7 +12,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        tools:src="@drawable/ic_upload"/>
+        tools:src="@drawable/ic_upload"
+        android:background="@drawable/button_circle"/>
 
     <TextView
         android:id="@+id/title_download"

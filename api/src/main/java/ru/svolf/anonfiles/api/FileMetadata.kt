@@ -1,7 +1,7 @@
 package ru.svolf.anonfiles.api
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
+
 
 /*
  * Created by SVolf on 02.02.2023, 20:59
@@ -14,5 +14,5 @@ import kotlinx.serialization.Serializable
  * @param size FileSize object
  * @see FileSize
  */
-@Serializable
-data class FileMetadata(@SerialName("id") val id: String, @SerialName("name") val name: String, @SerialName("size") val size: FileSize)
+
+data class FileMetadata(@SerializedName("id") val id: String, @SerializedName("name") val name: String, @SerializedName("size") val size: FileSize)

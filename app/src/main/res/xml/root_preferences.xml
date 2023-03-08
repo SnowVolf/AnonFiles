@@ -31,4 +31,11 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory app:iconSpaceReserved="false" android:title="@string/title_info">
+        <Preference
+            app:key="about"
+            app:iconSpaceReserved="false"
+            android:title="@string/title_info"/>
+    </PreferenceCategory>
+
 </PreferenceScreen>

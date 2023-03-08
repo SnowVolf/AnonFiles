@@ -1,7 +1,6 @@
 package ru.svolf.anonfiles.api
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
 /*
  * Created by SVolf on 02.02.2023, 21:08
@@ -12,5 +11,4 @@ import kotlinx.serialization.Serializable
  * @param full an absolute URL to the file which given from Metadata
  * @param short URL which is relative to full URL (without file name)
  */
-@Serializable
-data class FileUrl(@SerialName("full") val full: String, @SerialName("short") val short: String)
+data class FileUrl(@SerializedName("full") val full: String, @SerializedName("short") val short: String)

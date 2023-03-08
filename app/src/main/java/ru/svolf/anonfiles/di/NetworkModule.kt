@@ -4,22 +4,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import androidx.work.WorkManager
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import ru.svolf.anonfiles.api.AnonApi
 import ru.svolf.anonfiles.util.NetworkStatusTracker
-import timber.log.Timber
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.ProxySelector
@@ -67,14 +64,13 @@ object NetworkModule {
 	fun provideSettings(@ApplicationContext context: Context): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
 
-	@OptIn(ExperimentalSerializationApi::class)
 	@Provides
 	fun provideRetrofit(client: OkHttpClient): Retrofit {
 		val type: MediaType = "application/json".toMediaTypeOrNull()!!
 		val builder = Retrofit.Builder()
 		builder.baseUrl("http://api.anonfiles.com/")
 		builder.client(client)
-		builder.addConverterFactory(Json.asConverterFactory(type))
+		builder.addConverterFactory(GsonConverterFactory.create())
 		return builder.build()
 	}
 

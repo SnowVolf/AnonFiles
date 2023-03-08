@@ -12,7 +12,8 @@ import retrofit2.http.*
  */
 interface AnonApi {
     @POST("upload")
-    suspend fun upload(@Part file: MultipartBody.Part): Call<AnonResponse>
+    @Multipart
+    suspend fun upload(@Part file: MultipartBody.Part): AnonResponse
 
     @GET("v2/file/{id}/info")
     @Headers("Content-Type: application/json", "Accept: application/json", "Connection: keep-alive")

@@ -43,4 +43,18 @@
     <string name="state_cancelled">Cancelled</string>
     <string name="state_unknown">Unknown error</string>
     <string name="msg_download_start">Starting download</string>
+    <string name="err_file_invalid">Invalid file</string>
+    <string name="err_file_banned">File banned (maybe DMCA?)</string>
+    <string name="err_file_provided">File not avialable</string>
+    <string name="err_file_disallowed">Disallowed file type</string>
+    <string name="err_size_exceeded">Max file size exceeded</string>
+    <string name="err_bytes_hour">The upload limit has been exceeded. Come back in an hour</string>
+    <string name="err_files_day">The daily file upload limit has been exceeded. Come back in 24 hours</string>
+    <string name="err_files_hour">The download limit has been exceeded. Come back in an hour</string>
+    <string name="err_404">File not found</string>
+    <string name="err_sys_failture">Error on the server. We are already working on its elimination</string>
+    <string name="err_wtf">How did you get here? I do not know what to do with it!</string>
+    <string name="err_file_empty">This file is empty</string>
+    <string name="err_bytes_day">The daily limit for unloading has been exceeded. Come back in 24 hours</string>
+    <string name="title_settings">Settings</string>
 </resources>

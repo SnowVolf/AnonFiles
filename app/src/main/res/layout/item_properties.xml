@@ -11,11 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Text"
-        android:textAppearance="@style/TextAppearance.Material3.TitleSmall" />
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
     <TextView
         android:id="@+id/property_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Text"
-        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 </LinearLayout>

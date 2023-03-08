@@ -1,12 +1,9 @@
 package ru.svolf.anonfiles.presentation.info
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import ru.svolf.anonfiles.data.repository.HistoryRepository
 import javax.inject.Inject
 
@@ -20,7 +17,9 @@ class HistoryViewModel @Inject constructor(private val repository: HistoryReposi
 	fun getItems() = repository.getAllItems()
 
 	suspend fun put(link: String, sizeReadable: String) {
-		repository.saveToHistory(link, sizeReadable, false)
+		withContext(Dispatchers.IO) {
+			repository.saveToHistory(link, sizeReadable, false)
+		}
 	}
 
 

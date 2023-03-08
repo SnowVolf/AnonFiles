@@ -16,3 +16,4 @@ rootProject.name = "AnonFiles"
 include ':app'
 include ':api'
 include ':bullet'
+include ':core-ui'

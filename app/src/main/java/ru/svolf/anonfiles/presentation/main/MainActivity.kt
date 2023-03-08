@@ -8,15 +8,16 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.svolf.anonfiles.R
-import ru.svolf.anonfiles.adapter.ViewPagerAdapter
 import ru.svolf.anonfiles.databinding.ActivityMainBinding
-import ru.svolf.anonfiles.presentation.about.AboutDialogFragment
-import ru.svolf.anonfiles.presentation.info.InfoFragment
-import ru.svolf.anonfiles.presentation.settings.SettingsFragment
-import ru.svolf.anonfiles.presentation.upload.UploadFragment
+import ru.svolf.anonfiles.util.ConnectionObserver
+import ru.svolf.anonfiles.util._string
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -24,10 +25,7 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private val viewModel by viewModels<MainViewModel>()
-
-    private lateinit var mediator: TabLayoutMediator
-    private val tabLayout by lazy { binding.tabLayout }
-    private val viewPager by lazy { binding.viewPager }
+    private val navHostController by lazy { Navigation.findNavController(this, R.id.fragment_container) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,25 +33,19 @@ class MainActivity : AppCompatActivity() {
             setContentView(it.root)
             setSupportActionBar(it.toolbar)
         }
-
-        val pagerAdapter = ViewPagerAdapter(this).apply {
-            addFragment(InfoFragment(), R.drawable.ic_download)
-            addFragment(UploadFragment(), R.drawable.ic_upload)
-            addFragment(SettingsFragment(), R.drawable.ic_settings)
-        }
-
-        viewModel.networkState.observe(this) {state ->
+        NavigationUI.setupActionBarWithNavController(this, navHostController)
+        viewModel.connectionState.onEach { state ->
             when(state) {
-                false -> {
-                    binding.toolbar.subtitle = getString(R.string.msg_network_unavaiable)
-                    binding.cardContainer.visibility = View.GONE
-                }
-                true -> {
+                ConnectionObserver.State.Available -> {
                     binding.toolbar.subtitle = null
                     binding.cardContainer.visibility = View.VISIBLE
                 }
+                else -> {
+                    binding.toolbar.subtitle = getString(_string.msg_network_unavaiable)
+                    binding.cardContainer.visibility = View.GONE
+                }
             }
-        }
+        }.launchIn(lifecycleScope)
 
         addMenuProvider(object: MenuProvider{
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -62,8 +54,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.item_info -> {
-                        AboutDialogFragment().show(supportFragmentManager)
+                    R.id.item_settings -> {
+                        navHostController.navigate(R.id.action_toSettings)
                         return true
                     }
                 }
@@ -71,18 +63,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         }, this)
-        viewPager.adapter = pagerAdapter
-        mediator = TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.setIcon(pagerAdapter.getIcon(position))
-        }.also {
-            it.attach()
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (mediator.isAttached)
-            mediator.detach()
         _binding = null
     }
 

@@ -1,8 +1,6 @@
 package ru.svolf.anonfiles.api
 
-import android.os.Parcel
-import android.os.Parcelable
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 
 /*
  * Created by SVolf on 02.02.2023, 21:30
@@ -15,9 +13,9 @@ import kotlinx.serialization.SerialName
  * @param code int code of this error
  * @see ErrorCodes
  */
-@kotlinx.serialization.Serializable
+
 data class ApiError(
-	@SerialName("message") val message: String,
-	@SerialName("type") val type: String,
-	@SerialName("code") val code: Int
+	@SerializedName("message") val message: String,
+	@SerializedName("type") val type: String,
+	@SerializedName("code") val code: Int
 	) : java.io.Serializable

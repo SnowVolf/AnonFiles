@@ -36,4 +36,17 @@
     <string name="state_cancelled">Загрузка отменена</string>
     <string name="state_unknown">Неизвестная ошибка</string>
     <string name="msg_download_start">Начинается загрузка</string>
+    <string name="err_file_invalid">Недопустимый файл</string>
+    <string name="err_file_banned">Доступ к файлу заблокирован</string>
+    <string name="err_file_empty">По данному адресу ничего не найдено</string>
+    <string name="err_file_provided">Файл недоступен</string>
+    <string name="err_file_disallowed">Недопустимый тип файла</string>
+    <string name="err_size_exceeded">Превышен максимальный размер файла</string>
+    <string name="err_bytes_day">Превышен дневной лимит на выгрузку файлов. Возвращайтесь через 24 часа</string>
+    <string name="err_bytes_hour">Превышен лимит на выгрузку. Возвращайтесь через час</string>
+    <string name="err_files_day">Превышен дневной лимит на загрузку файлов. Возвращайтесь через 24 часа</string>
+    <string name="err_files_hour">Превышен лимит на загрузку. Возвращайтесь через час</string>
+    <string name="err_404">Файл не найден</string>
+    <string name="err_sys_failture">Ошибка на сервере. Мы уже работаем над ее устранением</string>
+    <string name="err_wtf">Ты как сюда попал? Я не знаю что с этим делать!</string>
 </resources>

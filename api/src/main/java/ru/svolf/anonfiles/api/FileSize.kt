@@ -1,7 +1,7 @@
 package ru.svolf.anonfiles.api
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
+
 
 /*
  * Created by SVolf on 02.02.2023, 20:52
@@ -12,5 +12,4 @@ import kotlinx.serialization.Serializable
  * @param bytes Physical file size in bytes
  * @param readable Readable file size which displayed to user
  */
-@Serializable
-data class FileSize(@SerialName("bytes") val bytes: Int, @SerialName("readable") val readable: String)
+data class FileSize(@SerializedName("bytes") val bytes: Int, @SerializedName("readable") val readable: String)

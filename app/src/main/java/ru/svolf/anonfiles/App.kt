@@ -8,6 +8,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
 import ru.svolf.anonfiles.service.NotificationConstants
+import ru.svolf.anonfiles.util._string
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -32,8 +33,8 @@ class App : Application(), Configuration.Provider {
 	}
 
 	private fun createNotificationChannel(){
-		val name = getString(R.string.notifications_channel_title)
-		val description = getString(R.string.notification_channel_desc)
+		val name = getString(_string.notifications_channel_title)
+		val description = getString(_string.notification_channel_desc)
 		val importance = NotificationManager.IMPORTANCE_DEFAULT
 		val channel = NotificationChannel(NotificationConstants.CHANNEL_ID, name, importance)
 		channel.description = description

@@ -21,10 +21,10 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import ru.svolf.anonfiles.R
 import ru.svolf.anonfiles.api.AnonApi
-import ru.svolf.anonfiles.data.repository.HistoryRepository
 import ru.svolf.anonfiles.util.UrlExtractor.findMatchedString
+import ru.svolf.anonfiles.util._drawable
+import ru.svolf.anonfiles.util._string
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -72,13 +72,13 @@ class FileDownloadWorker @AssistedInject constructor(
 
 			val uri = getSavedFileUri(fileName, fileType, needUrl, context)
 			// File succesfully downloaded
-			builder.setSmallIcon(IconCompat.createWithResource(context, R.drawable.ic_download_done))
-				.setContentTitle(context.getString(R.string.notification_title_downloaded, fileName))
+			builder.setSmallIcon(IconCompat.createWithResource(context, _drawable.ic_download_done))
+				.setContentTitle(context.getString(_string.notification_title_downloaded, fileName))
 				.setOngoing(false)
 				.setProgress(0, 0, false)
 			uri?.let {
 				builder.setContentIntent(createIntent(it))
-				builder.setContentText(context.getString(R.string.notification_msg_open))
+				builder.setContentText(context.getString(_string.notification_msg_open))
 				builder.clearActions()
 			}
 			NotificationManagerCompat.from(context).notify(Random.nextInt(), builder.build())
@@ -148,12 +148,12 @@ class FileDownloadWorker @AssistedInject constructor(
 		setForeground(
 			ForegroundInfo(
 				notificatorId,
-				builder.setSmallIcon(IconCompat.createWithResource(context, R.drawable.ic_download))
-					.setContentTitle(context.getString(R.string.notification_title_downloading, fileName))
+				builder.setSmallIcon(IconCompat.createWithResource(context, _drawable.ic_download))
+					.setContentTitle(context.getString(_string.notification_title_downloading, fileName))
 					.setOngoing(true)
 					.setProgress(0, 0, true)
 					.addAction(NotificationCompat.Action(
-						IconCompat.createWithResource(context, R.drawable.ic_cancel_download),
+						IconCompat.createWithResource(context, _drawable.ic_cancel_download),
 						context.getString(android.R.string.cancel),
 						worker.createCancelPendingIntent(id))
 					).build()

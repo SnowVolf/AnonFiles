@@ -13,7 +13,7 @@ object UrlExtractor {
 	 * @return file id or original link if cannot extract
 	 */
 	fun extractId(linkId: ContentString): ContentString {
-		val regex = "^https?://anonfiles\\.\\w+/(\\w+).+$".toRegex()
+		val regex = "^https?://anonfiles\\.com/(\\w+).+$".toRegex()
 		return regex.find(linkId)?.groups?.get(1)?.value ?: linkId
 	}
 
@@ -23,8 +23,9 @@ object UrlExtractor {
 	 * @return file name or original link if cannot extract
 	 */
 	fun extractName(linkId: ContentString): ContentString {
-		val regex = "^https?://anonfiles\\.com/\\w+/(\\w+)$".toRegex()
-		return regex.find(linkId)?.groups?.get(1)?.value ?: linkId
+		val regex = "^https?://anonfiles\\.com/\\w+/(\\S+)_(\\w+)$".toRegex()
+		val find = regex.find(linkId)
+		return "${find?.groupValues.orEmpty()[1]}.${find?.groupValues.orEmpty()[2]}"
 	}
 
 	/**
@@ -32,8 +33,8 @@ object UrlExtractor {
 	 * @param inputString контент html страницы как string
 	 * @return ссылку на файл на сервере которую уже можно скачать или null
 	 */
-	fun findMatchedString(inputString: String): String? {
-		val pattern = Regex("href=\"(https://cdn-\\d+\\.anonfiles.com/\\w+/\\w+-\\d+/\\S+)\"")
+	fun findMatchedString(inputString: ContentString): ContentString? {
+		val pattern = "href=\"(https://cdn-\\d+\\.anonfiles.com/\\w+/\\w+-\\d+/\\S+)\"".toRegex()
 		var result: String? = null
 
 		inputString.lineSequence().forEach { line ->

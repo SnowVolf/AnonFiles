@@ -1,8 +1,6 @@
 package ru.svolf.anonfiles.presentation.info
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
@@ -11,14 +9,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import ru.svolf.anonfiles.R
-import ru.svolf.bullet.BulletAdapter
 import ru.svolf.anonfiles.adapter.items.ExplanationVH
 import ru.svolf.anonfiles.adapter.items.PropertiesVH
 import ru.svolf.anonfiles.data.entity.DownloadsItem
 import ru.svolf.anonfiles.data.entity.ExplanationItem
 import ru.svolf.anonfiles.data.entity.PropertiesItem
 import ru.svolf.anonfiles.databinding.DialogPropertiesBinding
+import ru.svolf.anonfiles.util._string
+import ru.svolf.anonfiles.util.copyToClipboard
+import ru.svolf.bullet.BulletAdapter
 
 /*
  * Created by SVolf on 01.03.2023, 15:40
@@ -41,7 +40,7 @@ class PropertiesDialogFragment : BottomSheetDialogFragment() {
 		fun newInstance(item: DownloadsItem, manager: FragmentManager) =
 			PropertiesDialogFragment().also {
 				it.arguments = Bundle().apply {
-					putParcelable(ARG_DB_ITEM, item)
+					putSerializable(ARG_DB_ITEM, item)
 				}
 			}.show(manager, TAG)
 	}
@@ -49,7 +48,11 @@ class PropertiesDialogFragment : BottomSheetDialogFragment() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
-			interestedItem = it.getParcelable(ARG_DB_ITEM)!!
+			interestedItem =
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+					it.getSerializable(ARG_DB_ITEM, DownloadsItem::class.java)
+				else
+					it.getSerializable(ARG_DB_ITEM) as DownloadsItem
 		}
 	}
 
@@ -60,11 +63,11 @@ class PropertiesDialogFragment : BottomSheetDialogFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		binding.title.setText(R.string.title_properties)
-		val datapter = BulletAdapter(listOf(PropertiesVH(::clickOnItem), ExplanationVH()))
-		binding.listProperties.adapter = datapter
+		binding.title.setText(_string.title_properties)
+		val adapter = BulletAdapter(listOf(PropertiesVH(::clickOnItem), ExplanationVH()))
+		binding.listProperties.adapter = adapter
 		interestedItem?.let {
-			datapter.mergeItems(processItem(it))
+			adapter.mergeItems(processItem(it))
 		}
 	}
 
@@ -74,22 +77,20 @@ class PropertiesDialogFragment : BottomSheetDialogFragment() {
 	}
 
 	private fun processItem(item: DownloadsItem) = listOf(
-		PropertiesItem(R.string.properties_filename, item.fileName),
-		PropertiesItem(R.string.properties_size, item.sizeReadable),
-		PropertiesItem(R.string.properties_link, item.link),
-		PropertiesItem(R.string.properties_uploaded, DateUtils.getRelativeTimeSpanString(
+		PropertiesItem(_string.properties_filename, item.fileName),
+		PropertiesItem(_string.properties_size, item.sizeReadable),
+		PropertiesItem(_string.properties_link, item.link),
+		PropertiesItem(_string.properties_uploaded, DateUtils.getRelativeTimeSpanString(
 			item.id,
 			System.currentTimeMillis(),
 			DateUtils.MINUTE_IN_MILLIS)
 			.toString()),
-		ExplanationItem(R.string.msg_item_copyable)
+		ExplanationItem(_string.msg_item_copyable)
 	)
 
 	private fun clickOnItem(item: PropertiesItem) {
-		val clipboard: ClipboardManager = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-		val clipData = ClipData.newPlainText(TAG, item.value)
-		clipboard.setPrimaryClip(clipData)
-		Toast.makeText(context, R.string.msg_copied_clipboard, Toast.LENGTH_SHORT).show()
+		requireContext().copyToClipboard(item.value)
+		Toast.makeText(context, _string.msg_copied_clipboard, Toast.LENGTH_SHORT).show()
 	}
 
 }

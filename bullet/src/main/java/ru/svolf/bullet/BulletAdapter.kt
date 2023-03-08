@@ -44,4 +44,8 @@ class BulletAdapter(private val adapterItems: List<ItemVH<*, *>>)
 		items.addAll(newItems)
 		result.dispatchUpdatesTo(this)
 	}
+
+	fun reset(){
+		mergeItems(listOf())
+	}
 }

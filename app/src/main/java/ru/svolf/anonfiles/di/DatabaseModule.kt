@@ -9,7 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.svolf.anonfiles.data.HistoryDb
-import ru.svolf.anonfiles.data.repository.HistoryRepository
+import ru.svolf.anonfiles.data.repository.impl.HistoryRepositoryImpl
 import javax.inject.Singleton
 
 /*
@@ -27,5 +27,5 @@ internal object DatabaseModule {
 
 	@Provides
 	@Singleton
-	fun provideHistoryRepository(db: HistoryDb): HistoryRepository = HistoryRepository(db)
+	fun provideHistoryRepository(db: HistoryDb): HistoryRepositoryImpl = HistoryRepositoryImpl(db)
 }

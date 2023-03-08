@@ -1,7 +1,5 @@
 package ru.svolf.anonfiles.api
 
-import kotlinx.serialization.SerialName
-
 /*
  * Created by SVolf on 02.03.2023, 18:15
  * This file is a part of "AnonFiles" project

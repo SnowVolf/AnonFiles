@@ -1,6 +1,6 @@
 package ru.svolf.anonfiles.api
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 
 /*
  * Created by SVolf on 02.02.2023, 21:45
@@ -15,6 +15,5 @@ import kotlinx.serialization.SerialName
  * @see ApiFile
  * @see ApiError
  */
-@kotlinx.serialization.Serializable
-data class AnonResponse(@SerialName("status") val status: Boolean, @SerialName("data")
-val data: ApiFile? = null, @SerialName("error") val error: ApiError? = null)
+data class AnonResponse(@SerializedName("status") val status: Boolean, @SerializedName("data")
+val data: ApiFile? = null, @SerializedName("error") val error: ApiError? = null)

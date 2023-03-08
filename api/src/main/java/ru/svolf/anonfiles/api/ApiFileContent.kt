@@ -1,6 +1,6 @@
 package ru.svolf.anonfiles.api
 
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 
 /*
  * Created by SVolf on 02.02.2023, 21:22
@@ -13,5 +13,4 @@ import kotlinx.serialization.SerialName
  * @see FileUrl
  * @see FileMetadata
  */
-@kotlinx.serialization.Serializable
-data class ApiFileContent(@SerialName("url") val url: FileUrl, @SerialName("metadata") val metadata: FileMetadata)
+data class ApiFileContent(@SerializedName("url") val url: FileUrl, @SerializedName("metadata") val metadata: FileMetadata)

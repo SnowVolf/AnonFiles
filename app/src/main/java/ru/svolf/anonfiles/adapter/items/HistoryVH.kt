@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import ru.svolf.anonfiles.R
-import ru.svolf.bullet.BaseViewHolder
-import ru.svolf.bullet.ItemVH
 import ru.svolf.anonfiles.data.entity.DownloadsItem
-import ru.svolf.bullet.Item
 import ru.svolf.anonfiles.databinding.ItemDownloadsBinding
+import ru.svolf.anonfiles.util._drawable
+import ru.svolf.bullet.BaseViewHolder
+import ru.svolf.bullet.Item
+import ru.svolf.bullet.ItemVH
 
 /*
  * Created by SVolf on 18.02.2023, 18:14
@@ -45,8 +46,8 @@ class HistoryVH(private val onClickDownloads: (DownloadsItem) -> Unit): ItemVH<I
 			super.onBind(item)
 			with(binding) {
 				val icon = when(item.isUploaded) {
-					true -> R.drawable.ic_upload
-					false -> R.drawable.ic_download
+					true -> _drawable.ic_upload
+					false -> _drawable.ic_download
 				}
 				downloadIcon.setImageResource(icon)
 				titleDownload.text = item.fileName

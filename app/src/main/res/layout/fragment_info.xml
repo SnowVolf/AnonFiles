@@ -1,50 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.info.InfoFragment">
-    <LinearLayout
-        android:id="@+id/layout_progress"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:text="@string/msg_fetching_file_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/layout_file_content"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:visibility="visible">
-       <androidx.appcompat.widget.SearchView
-           android:id="@+id/field_search"
-           android:layout_width="match_parent"
-           android:layout_height="?actionBarSize"
-           app:queryHint="@string/hint_extract_link"
-           app:queryBackground="@android:color/transparent"
-           app:searchIcon="@null"
-           app:iconifiedByDefault="false"
-           android:background="@drawable/edit_text_selector"/>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="8dp">
 
-        <include layout="@layout/item_downloadable" android:id="@+id/included"/>
+    <TextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.Material3.HeadlineMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list_history"
-            android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/subtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Test"
+        android:textSize="16sp"/>
+
+    <ru.svolf.core_ui.FABProgressCircle
+        android:id="@+id/fabProgressCircle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:arcColor="?colorPrimary"
+        app:arcWidth="4dp"
+        app:finalIcon="@drawable/ic_download_done">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-    </LinearLayout>
-</FrameLayout>
+            android:src="@drawable/ic_upload"
+            android:layout_margin="4dp"/>
+
+    </ru.svolf.core_ui.FABProgressCircle>
+
+    <androidx.appcompat.widget.SearchView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fabProgressCircle"
+        android:id="@+id/field_search"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        app:queryHint="@string/hint_extract_link"
+        app:queryBackground="@android:color/transparent"
+        app:searchIcon="@null"
+        app:iconifiedByDefault="false"
+        android:background="@drawable/edit_text_selector"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/field_search"
+        android:id="@+id/list_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_downloads"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:paddingBottom="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
