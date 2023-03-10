@@ -6,9 +6,9 @@ package ru.svolf.anonfiles.api
  */
 sealed class AnonResult {
 
-	data class Success(val data: ApiFile): AnonResult()
+	data class Success(val data: ApiFile, val strategy: ModeStrategy): AnonResult()
 
-	data class Error(val error: ApiError): AnonResult()
+	data class Error(val error: ApiError, val strategy: ModeStrategy): AnonResult()
 
 	object Empty : AnonResult()
 }

@@ -19,6 +19,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.svolf.anonfiles.api.AnonApi
 import ru.svolf.anonfiles.util._drawable
+import ru.svolf.anonfiles.util._string
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -38,20 +39,22 @@ class FileUploadWorker @AssistedInject constructor(
 
 	private val builder = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
 	private val notificatorId = NotificationConstants.UPLOAD_NOTIFICATION_ID
+	private val resolver = context.contentResolver
 
 	companion object {
 		// uri файла который выбрал юзер
 		const val KEY_FILE_URI = "file_uri"
 		// json ответ от сервера в виде строки
+		// костыль для того чтобы прокинуть данные наружу. WorkManager не может принимать ничего кроме примитивов и строк
 		const val KEY_SERVER_RESPONSE = "server_response"
 	}
 
 	override suspend fun doWork(): Result {
 		val rawUri = inputData.getString(KEY_FILE_URI)?.toUri()
-		val result = withContext(Dispatchers.IO){
+
+		return withContext(Dispatchers.IO){
 			extractFile(rawUri)
-		}
-		return result?.let {
+		}?.let {
 			val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(File(it.name).extension)
 			Timber.d("Get NAME = " + it.name)
 			startForegroundService(it.name)
@@ -69,7 +72,6 @@ class FileUploadWorker @AssistedInject constructor(
 	}
 
 	private fun extractFile(rawUri: Uri?): ReadedResult? {
-		val resolver = context.contentResolver
 		rawUri?.let {
 			try {
 				resolver.query(rawUri, null, null, null)!!.use { cursor ->
@@ -96,8 +98,8 @@ class FileUploadWorker @AssistedInject constructor(
 		setForeground(
 			ForegroundInfo(
 				notificatorId,
-				builder.setSmallIcon(IconCompat.createWithResource(context, _drawable.ic_download))
-					.setContentTitle("Uploading $fileName")
+				builder.setSmallIcon(IconCompat.createWithResource(context, _drawable.ic_upload))
+					.setContentTitle(context.getString(_string.uploading_title, fileName))
 					.setOngoing(true)
 					.setProgress(0, 0, true)
 					.addAction(

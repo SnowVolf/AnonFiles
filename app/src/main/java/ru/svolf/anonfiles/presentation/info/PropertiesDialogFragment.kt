@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import ru.svolf.anonfiles.adapter.decorators.PrettyPaddingItemDecoration
 import ru.svolf.anonfiles.adapter.items.ExplanationVH
 import ru.svolf.anonfiles.adapter.items.PropertiesVH
 import ru.svolf.anonfiles.data.entity.DownloadsItem
@@ -17,6 +19,7 @@ import ru.svolf.anonfiles.data.entity.PropertiesItem
 import ru.svolf.anonfiles.databinding.DialogPropertiesBinding
 import ru.svolf.anonfiles.util._string
 import ru.svolf.anonfiles.util.copyToClipboard
+import ru.svolf.anonfiles.util.dp
 import ru.svolf.bullet.BulletAdapter
 
 /*
@@ -64,10 +67,15 @@ class PropertiesDialogFragment : BottomSheetDialogFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding.title.setText(_string.title_properties)
-		val adapter = BulletAdapter(listOf(PropertiesVH(::clickOnItem), ExplanationVH()))
-		binding.listProperties.adapter = adapter
+
+		val adapterr = BulletAdapter(listOf(PropertiesVH(::clickOnItem), ExplanationVH()))
+		with(binding.listProperties) {
+			addItemDecoration(PrettyPaddingItemDecoration(12.dp))
+			addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+			adapter = adapterr
+		}
 		interestedItem?.let {
-			adapter.mergeItems(processItem(it))
+			adapterr.mergeItems(processItem(it))
 		}
 	}
 
@@ -91,6 +99,7 @@ class PropertiesDialogFragment : BottomSheetDialogFragment() {
 	private fun clickOnItem(item: PropertiesItem) {
 		requireContext().copyToClipboard(item.value)
 		Toast.makeText(context, _string.msg_copied_clipboard, Toast.LENGTH_SHORT).show()
+		dismiss()
 	}
 
 }

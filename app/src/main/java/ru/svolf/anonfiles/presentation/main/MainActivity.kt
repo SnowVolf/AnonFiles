@@ -1,13 +1,9 @@
 package ru.svolf.anonfiles.presentation.main
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.MenuProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
@@ -46,23 +42,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }.launchIn(lifecycleScope)
+    }
 
-        addMenuProvider(object: MenuProvider{
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_main, menu)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.item_settings -> {
-                        navHostController.navigate(R.id.action_toSettings)
-                        return true
-                    }
-                }
-                return false
-            }
-
-        }, this)
+    override fun onSupportNavigateUp(): Boolean {
+        return navHostController.navigateUp()
     }
 
     override fun onDestroy() {

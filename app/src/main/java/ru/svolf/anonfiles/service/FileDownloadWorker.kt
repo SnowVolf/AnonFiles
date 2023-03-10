@@ -43,6 +43,7 @@ class FileDownloadWorker @AssistedInject constructor(
 	private val worker: WorkManager,
 ): CoroutineWorker(context, workerParameters) {
 
+
 	private val builder = NotificationCompat.Builder(context, NotificationConstants.CHANNEL_ID)
 	private val notificatorId = NotificationConstants.DOWNLOAD_NOTIFICATION_ID
 
@@ -85,9 +86,11 @@ class FileDownloadWorker @AssistedInject constructor(
 			return if (uri != null) {
 				Result.success(workDataOf(KEY_FILE_URI to uri.toString()))
 			} else {
+				builder.clearActions()
 				Result.failure()
 			}
 		} else {
+			builder.clearActions()
 			return Result.failure()
 		}
 	}

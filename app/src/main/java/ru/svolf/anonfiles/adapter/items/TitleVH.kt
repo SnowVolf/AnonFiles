@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import ru.svolf.anonfiles.R
-import ru.svolf.bullet.BaseViewHolder
-import ru.svolf.bullet.ItemVH
 import ru.svolf.anonfiles.data.entity.TitleItem
-import ru.svolf.bullet.Item
 import ru.svolf.anonfiles.databinding.ItemTitleBinding
+import ru.svolf.bullet.BaseViewHolder
+import ru.svolf.bullet.Item
+import ru.svolf.bullet.ItemVH
 
 /*
  * Created by SVolf on 18.02.2023, 17:43
@@ -31,13 +31,11 @@ class TitleVH: ItemVH<ItemTitleBinding, TitleItem> {
 
 	private val diffUtil = object : DiffUtil.ItemCallback<TitleItem>() {
 		override fun areItemsTheSame(oldItem: TitleItem, newItem: TitleItem): Boolean {
-			// always true
-			return oldItem.title == oldItem.title
+			return oldItem.title == newItem.title
 		}
 
 		override fun areContentsTheSame(oldItem: TitleItem, newItem: TitleItem): Boolean {
-			// always true
-			return oldItem == oldItem
+			return oldItem.subtitle == newItem.subtitle
 		}
 
 	}
@@ -46,6 +44,7 @@ class TitleVH: ItemVH<ItemTitleBinding, TitleItem> {
 		override fun onBind(item: TitleItem) {
 			super.onBind(item)
 			binding.itemTitle.text = item.title
+			binding.itemSubtitle.text = item.subtitle
 		}
 	}
 }

@@ -8,6 +8,7 @@ import retrofit2.HttpException
 import ru.svolf.anonfiles.api.AnonApi
 import ru.svolf.anonfiles.api.AnonResult
 import ru.svolf.anonfiles.api.ApiError
+import ru.svolf.anonfiles.api.ModeStrategy
 import ru.svolf.anonfiles.data.repository.UploadRepository
 import java.io.File
 import java.io.IOException
@@ -28,14 +29,14 @@ class UploadRepositoryImpl @Inject constructor(private val api: AnonApi): Upload
 				MultipartBody.Part.createFormData("file", file.name, file.asRequestBody(mimeType?.toMediaType()))
 			)
 			if (fp.status) {
-				AnonResult.Success(fp.data!!)
+				AnonResult.Success(fp.data!!, ModeStrategy.UPLOAD)
 			} else {
-				AnonResult.Error(fp.error!!)
+				AnonResult.Error(fp.error!!, ModeStrategy.UPLOAD)
 			}
 		} catch (e: IOException) {
-			return AnonResult.Error(ApiError("", "", 0))
+			return AnonResult.Error(ApiError(e.message.orEmpty(), "", 0), ModeStrategy.UPLOAD)
 		} catch (e: HttpException) {
-			return AnonResult.Error(ApiError("", "", 0))
+			return AnonResult.Error(ApiError(e.message(), "", 0), ModeStrategy.UPLOAD)
 		}
 	}
 }

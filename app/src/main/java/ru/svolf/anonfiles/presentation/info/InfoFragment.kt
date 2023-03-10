@@ -1,33 +1,31 @@
 package ru.svolf.anonfiles.presentation.info
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.work.WorkInfo
-import com.afollestad.assent.Permission
-import com.afollestad.assent.coroutines.awaitPermissionsGranted
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import ru.svolf.anonfiles.R
 import ru.svolf.anonfiles.adapter.decorators.PrettyPaddingItemDecoration
 import ru.svolf.anonfiles.adapter.items.HistoryVH
 import ru.svolf.anonfiles.adapter.items.TitleVH
 import ru.svolf.anonfiles.api.AnonResult
 import ru.svolf.anonfiles.api.ApiError
 import ru.svolf.anonfiles.api.ApiFile
+import ru.svolf.anonfiles.api.ModeStrategy
 import ru.svolf.anonfiles.data.entity.DownloadsItem
 import ru.svolf.anonfiles.data.entity.TitleItem
 import ru.svolf.anonfiles.databinding.FragmentInfoBinding
-import ru.svolf.anonfiles.presentation.error.ErrorDialogFragment
+import ru.svolf.anonfiles.util.ErrorResolver
 import ru.svolf.anonfiles.util._string
 import ru.svolf.anonfiles.util.dp
 import ru.svolf.bullet.BulletAdapter
@@ -47,14 +45,9 @@ class InfoFragment : Fragment() {
     private val pickLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
             infoModel.uploadWithWorkManager(uri)
-            binding.fabProgressCircle.show()
         } else {
-            Toast.makeText(context, "ERROR", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, _string.no_file_selected, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    companion object {
-        const val TAG = "MainAnonFilesFragment"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -72,44 +65,71 @@ class InfoFragment : Fragment() {
             adapter = bulletAdapter
         }
 
+        requireActivity().addMenuProvider(object: MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_main, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.item_settings -> {
+                        findNavController().navigate(R.id.action_toSettings)
+                        return true
+                    }
+                }
+                return false
+            }
+
+        }, viewLifecycleOwner)
+
         binding.fieldSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty()) {
-                    infoModel.getData(query)
+                    infoModel.fetchInfoForFile(query)
                     return true
                 }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText.isNullOrEmpty()) {
+                    switchModes(ModeStrategy.UPLOAD, null)
+                }
                 return false
             }
         })
 
-        binding.fab.setOnClickListener {
-            pickLauncher.launch(arrayOf("*/*"))
-        }
-
         with(infoModel) {
             lifecycleScope.launchWhenStarted {
-                historyViewModel.getItems().map { items ->
-                    items.toMutableList<Item>().apply {
-                        add(0, TitleItem(getString(_string.title_history)))
+                historyViewModel.getItems()
+                    .map { items ->
+                        items.toMutableList<Item>().apply {
+                            add(0, TitleItem(getString(_string.title_history), resources.getQuantityString(R.plurals.items_counters, items.size, items.size)))
+                        }
                     }
-                }.collect { populatedItems ->
-                    bulletAdapter.mergeItems(populatedItems)
+                    .collect { populatedItems ->
+                        bulletAdapter.mergeItems(populatedItems)
+                    }
+            }
+            lifecycleScope.launchWhenStarted {
+                loadingState.collect(::switch)
+            }
+            lifecycleScope.launchWhenResumed {
+                statusSate.collectLatest {
+                    binding.subtitle.setText(it)
                 }
-                loadingState.collectLatest(::switch)
-
-                responseState.collectLatest { response ->
+            }
+            lifecycleScope.launchWhenStarted {
+                responseState.collect { response ->
                     when(response) {
-                        is AnonResult.Success -> onFileFetched(response.data)
-                        is AnonResult.Error -> onErrorThrown(response.error)
+                        is AnonResult.Success -> onFileFetched(response.data, response.strategy)
+                        is AnonResult.Error -> onErrorThrown(response.error, response.strategy)
                         is AnonResult.Empty -> Timber.d("Empty result")
                     }
                 }
             }
         }
+        switchModes(ModeStrategy.UPLOAD, null)
     }
 
     override fun onDestroyView() {
@@ -131,51 +151,32 @@ class InfoFragment : Fragment() {
         PropertiesDialogFragment.newInstance(item, childFragmentManager)
     }
 
-    private suspend fun onFileFetched(apiFile: ApiFile){
+    private fun onFileFetched(apiFile: ApiFile, strategy: ModeStrategy){
+        switchModes(strategy, apiFile)
         binding.title.text = apiFile.fileName
         binding.subtitle.text = apiFile.sizeReadable
-        binding.fab.setOnClickListener {
-            lifecycleScope.launch {
-                downloadFile(apiFile, apiFile.fullUrl, apiFile.sizeReadable)
-            }
-        }
     }
 
-    private fun onErrorThrown(error: ApiError){
+    private fun onErrorThrown(error: ApiError, strategy: ModeStrategy){
+        val msg = ErrorResolver.localizedMessage[error.code]?.let { getString(it) } ?: "${error.message} (${error.code})"
+        switchModes(strategy, null)
         binding.title.setText(_string.title_error)
+        binding.subtitle.text = msg
         binding.fabProgressCircle.hide()
-        ErrorDialogFragment.newInstance(error, childFragmentManager)
     }
 
-    private suspend fun downloadFile(apiFile: ApiFile, link: String, fileSize: String){
-        awaitPermissionsGranted(Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE, Permission.POST_NOTIFICATIONS)
-
-        Toast.makeText(context, _string.msg_download_start, Toast.LENGTH_SHORT).show()
-        infoModel.downloadWithWorkManager(apiFile).observe(viewLifecycleOwner) {
-            when (it.state) {
-                WorkInfo.State.SUCCEEDED -> {
-                    binding.subtitle.setText(_string.states_success)
-                    binding.fabProgressCircle.beginFinalAnimation()
-                    lifecycleScope.launch {
-                        historyViewModel.put(link, fileSize)
-                    }
+    private fun switchModes(strategy: ModeStrategy, file: ApiFile?){
+        if (strategy == ModeStrategy.DOWNLOAD) {
+            binding.fab.setImageResource(R.drawable.ic_download)
+            binding.fab.setOnClickListener {
+                file?.let {
+                    infoModel.downloadWithWorkManager(it)
                 }
-                WorkInfo.State.RUNNING -> {
-                    binding.subtitle.setText(_string.state_running)
-                    binding.fabProgressCircle.show()
-                }
-                WorkInfo.State.FAILED -> {
-                    binding.subtitle.setText(_string.state_error)
-                    binding.fabProgressCircle.hide()
-                }
-                WorkInfo.State.CANCELLED -> {
-                    binding.subtitle.setText(_string.state_cancelled)
-                    binding.fabProgressCircle.hide()
-                }
-                else -> {
-                    binding.subtitle.setText(_string.state_unknown)
-                    binding.fabProgressCircle.hide()
-                }
+            }
+        } else {
+            binding.fab.setImageResource(R.drawable.ic_upload)
+            binding.fab.setOnClickListener {
+                pickLauncher.launch(arrayOf("*/*"))
             }
         }
     }

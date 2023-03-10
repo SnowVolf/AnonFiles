@@ -8,7 +8,7 @@
     <string name="title_info">Info</string>
     <string name="btn_download">Download</string>
     <string name="msg_fetching_file_data">Fetching file data…</string>
-    <string name="hint_extract_link">Enter the link</string>
+    <string name="hint_extract_link">Enter the link and press enter</string>
     <string name="title_history">History</string>
     <string name="settings_title_connect">Connect over proxy</string>
     <string name="settings_summary_connect">Use this option if AnonFiles has been blocked in your country. ONLY SOCKS proxy are supported! HTTP proxy doesn\'t work!!!</string>
@@ -24,8 +24,6 @@
     <string name="properties_uploaded">Date uploaded</string>
     <string name="msg_item_copyable">You can copy value by clicking on them</string>
     <string name="msg_copied_clipboard">Copied to clipboard</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="msg_network_unavaiable">Network unavailable</string>
     <string name="msg_vpn_enabled">VPN enabled. Turn off an application proxy</string>
     <string name="properties_error_type">Error type</string>
@@ -57,4 +55,8 @@
     <string name="err_file_empty">This file is empty</string>
     <string name="err_bytes_day">The daily limit for unloading has been exceeded. Come back in 24 hours</string>
     <string name="title_settings">Settings</string>
+    <string name="title_welcome">Upload file</string>
+    <string name="subtitle_welcome">By clicking on the button, or enter the download link</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="uploading_title">Uploading %s</string>
 </resources>

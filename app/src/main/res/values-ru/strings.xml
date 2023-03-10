@@ -3,7 +3,7 @@
     <string name="title_info">Информация</string>
     <string name="btn_download">Загрузить</string>
     <string name="msg_fetching_file_data">Получение информации по ссылке</string>
-    <string name="hint_extract_link">Введите ссылку на файл</string>
+    <string name="hint_extract_link">Введите ссылку и нажмите enter</string>
     <string name="title_history">История</string>
     <string name="settings_title_connect">Подключение через прокси</string>
     <string name="settings_summary_connect">Используйте эту функцию, если AnonFiles заблокирован в вашей стране. Поддерживается SOCKS 4/5</string>
@@ -49,4 +49,8 @@
     <string name="err_404">Файл не найден</string>
     <string name="err_sys_failture">Ошибка на сервере. Мы уже работаем над ее устранением</string>
     <string name="err_wtf">Ты как сюда попал? Я не знаю что с этим делать!</string>
+    <string name="title_settings">Настройки</string>
+    <string name="title_welcome">Загрузите файл</string>
+    <string name="subtitle_welcome">Нажатием на кнопку, или введите ссылку на скачивание</string>
+    <string name="uploading_title">Загрузка на сервер %s</string>
 </resources>

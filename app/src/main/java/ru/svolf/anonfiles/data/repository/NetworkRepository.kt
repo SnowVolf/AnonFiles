@@ -1,5 +1,6 @@
 package ru.svolf.anonfiles.data.repository
 
+import kotlinx.coroutines.flow.Flow
 import ru.svolf.anonfiles.api.AnonResult
 
 /*
@@ -7,6 +8,6 @@ import ru.svolf.anonfiles.api.AnonResult
  * This file is a part of "AnonFiles" project
  */
 interface NetworkRepository {
-	suspend fun safeApiCall(url: String): AnonResult
+	suspend fun safeApiCall(url: String): Flow<AnonResult>
 
 }

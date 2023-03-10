@@ -1,5 +1,7 @@
 package ru.svolf.anonfiles.adapter.items
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -48,6 +50,10 @@ class HistoryVH(private val onClickDownloads: (DownloadsItem) -> Unit): ItemVH<I
 				val icon = when(item.isUploaded) {
 					true -> _drawable.ic_upload
 					false -> _drawable.ic_download
+				}
+				when(item.isUploaded) {
+					true -> downloadIcon.backgroundTintList = ColorStateList.valueOf(Color.argb(200, 0, 255, 255))
+					false -> downloadIcon.backgroundTintList = ColorStateList.valueOf(Color.argb(200, 0, 255, 0))
 				}
 				downloadIcon.setImageResource(icon)
 				titleDownload.text = item.fileName

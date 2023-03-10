@@ -9,8 +9,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -66,7 +64,6 @@ object NetworkModule {
 
 	@Provides
 	fun provideRetrofit(client: OkHttpClient): Retrofit {
-		val type: MediaType = "application/json".toMediaTypeOrNull()!!
 		val builder = Retrofit.Builder()
 		builder.baseUrl("http://api.anonfiles.com/")
 		builder.client(client)
